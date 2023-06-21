@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rabbitmq-tools"
+version = "0.0.1"
+authors = [
+    { name="Christian Thompson", email="cjthom43@asu.edu" },
+    { name="Paul Horton", email="pahorton@asu.edu" },
+]
+description = "Provides wrappers for RabbitMQ development in Python."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/217690thompson/rabbitmq-tools"
+"Bug Tracker" = "https://github.com/217690thompson/rabbitmq-tools/issues"
