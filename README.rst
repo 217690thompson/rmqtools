@@ -38,7 +38,7 @@ and ``subscriber.py``.
 
 publisher.py:
 
- .. code :: python
+.. code :: python
 
     from rmqtools import RmqConnection
 
@@ -55,7 +55,7 @@ publisher.py:
 
 subscriber.py:
 
- .. code :: python
+.. code :: python
 
     from datetime import datetime
     import json

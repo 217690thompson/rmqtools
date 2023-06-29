@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rmqtools"
-version = "0.0.1"
+version = "0.1.0"
 authors = [
     { name="Christian Thompson", email="cjthom43@asu.edu" },
     { name="Paul Horton", email="pahorton@asu.edu" },
@@ -22,5 +22,5 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/217690thompson/rabbitmq-tools"
-"Bug Tracker" = "https://github.com/217690thompson/rabbitmq-tools/issues"
+"Homepage" = "https://github.com/217690thompson/rmqtools"
+"Bug Tracker" = "https://github.com/217690thompson/rmqtools/issues"
