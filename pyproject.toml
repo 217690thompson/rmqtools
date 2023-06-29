@@ -3,19 +3,22 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "rabbitmq-tools"
+name = "rmqtools"
 version = "0.0.1"
 authors = [
     { name="Christian Thompson", email="cjthom43@asu.edu" },
     { name="Paul Horton", email="pahorton@asu.edu" },
 ]
-description = "Provides wrappers for RabbitMQ development in Python."
+description = "Wrappers for RabbitMQ development in Python. Based on the pika library."
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+]
+dependencies = [
+    "pika >= 1.3.0",
 ]
 
 [project.urls]
