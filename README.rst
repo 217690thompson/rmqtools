@@ -1,5 +1,5 @@
-Rmqtools
-========
+Welcome to Rmqtools!
+====================
 Rmqtools provides enhanced features for RabbitMQ development in Python.
 
 Introduction
@@ -20,6 +20,33 @@ applications.
   in ``RmqConnection``. ``Publisher`` and ``Subscriber``, for example, allow
   for unique publish-subscribe relationships to be set up outside of the
   periodic status message use case contained in the high-level wrappers.
+
+Installation
+------------
+
+Prerequisites
+~~~~~~~~~~~~~
+
+* Pika (`version 1.3.0+ <https://pika.readthedocs.io/en/stable/#installing-pika>`_)
+* RabbitMQ (`version 3.12.0+ <https://rabbitmq.com/download.html>`_)
+
+Note: Pika should be automatically installed when installing Rmqtools
+
+Rmqtools is not currently available for download with PyPI. Once it is
+available, it can be installed via pip::
+
+    pip install rmqtools
+
+To install the latest version before Rmqtools is available on PyPI, use the
+latest_ release on GitHub and download ``rmqtools-<version>-py3-none-any.whl``.
+Then install the wheel file with pip::
+
+    pip install rmqtools-<version>-py3-none-any.whl
+
+The prerelease version is currently available on the PyPI test site. It can
+be installed via pip::
+
+    pip install -i https://test.pypi.org/simple/ rmqtools
 
 Documentation
 -------------
@@ -115,3 +142,6 @@ Exposed Classes
     handler, defaults to ``[]``; operates like ``*args``
   - ``kwargs : dict`` - a dictionary of keyword arguments to pass to the
     response handler, defaults to ``{}``; operates like ``**kwargs``
+
+.. aliases below here
+.. _latest: https://github.com/217690thompson/rmqtools/releases/latest
