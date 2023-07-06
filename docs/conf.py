@@ -25,7 +25,7 @@ master_doc = 'index'
 project = 'rmqtools'
 copyright = '2023, Christian Thompson, Paul Horton'
 author = 'Christian Thompson, Paul Horton'
-release = '1.0.0'
+release = '1.0.0-alpha'
 version = '.'.join(release.split('.')[0:2])
 
 exclude_patterns = ['_build']
