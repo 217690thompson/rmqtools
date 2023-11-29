@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rmqtools"
-version = "1.0.0-alpha"
+version = "1.0.0-alpha.1"
 authors = [
     { name="Christian Thompson", email="cjthom43@asu.edu" },
     { name="Paul Horton", email="pahorton@asu.edu" },

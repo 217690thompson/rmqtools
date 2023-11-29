@@ -359,10 +359,8 @@ class RpcClient():
 
         body = command.__dict__
         props = self._get_publish_props()
-        print(queue)
         self.publisher.publish_json(body, routing_key=queue,
                                     properties=props)
-        print('foo')
         while not stop_event.is_set():
             self.Connection.connection.process_data_events(time_limit=1)
             if self.response is not None:
