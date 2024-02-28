@@ -169,6 +169,9 @@ class RmqConnection():
         self.response_handlers: Dict[str, Callable[[Any], Any]]
         self.response_handlers = {}
 
+        self.timeout_handlers: Dict[str, Callable[[int], None]]
+        self.timeout_handlers = {}
+
         def handle_exit(sig, frame):
             print('Main thread interrupted by user. '
                   'Shutting down all child threads.')
@@ -616,8 +619,31 @@ class RmqConnection():
             return wrapper
         return decorator
 
+    def handle_timeout(self, command_id:str):
+        """A method decorator to set the timeout handler of an RPC client.
+
+        This method is not threaded, but it will not cause any IO blocking.
+        All it does is update the ``timeout_handlers`` attribute with the
+        wrapped function. The wrapped function should have only one argument
+        for the timeout length and should not return anything.
+
+        Parameters
+        ----------
+        command_id : str
+            The identifier of the command this response handler is associated
+            with.
+        """
+        def decorator(func:Callable[[Any], Any]):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
+            self.timeout_handlers.update({command_id: func})
+            return wrapper
+        return decorator
+
     def _send_command(self, func:Callable[[Any], ResponseObject],
-                      command_id:str, queue:str, *args, **kwargs) -> None:
+                      command_id:str, queue:str, *args, timeout:int=None,
+                      **kwargs) -> None:
         """Sends a command to an associated RPC server.
 
         This method is not automatically threaded, but it is threadsafe. It
@@ -640,22 +666,30 @@ class RmqConnection():
             call with the associated ``handle_response`` decorator.
         queue : str
             The queue name of the RPC server where the command is being sent.
+        timeout : int, optional
+            How long to wait for a response before timing out. Default behavior
+            is no timeout.
         """
         def default_handler(*a, **kw):
             pass
         command = func(*args, **kwargs)
         response_handler = self.response_handlers.get(
             command_id, default_handler)
+        timeout_handler = self.timeout_handlers.get(
+            command_id, default_handler)
         exchange, _ = self.exchanges.get('command')
         client = RpcClient(exchange)
         conn = self._get_connection()
         client.connect(conn)
-        response = client.call_threadsafe(queue, self.stop_event, command)
+        response = client.call_threadsafe(queue, self.stop_event, command,
+                                          timeout=timeout)
+        if not response:
+            return timeout_handler(timeout)
         args = response.args
         kwargs = response.kwargs
-        response_handler(*args, **kwargs)
+        return response_handler(*args, **kwargs)
 
-    def send_command(self, command_id:str, queue:str):
+    def send_command(self, command_id:str, queue:str, timeout:int=None):
         """A method decorator to send a command to an RPC server.
 
         This method is automatically threaded. It creates an RPC client to
@@ -675,6 +709,9 @@ class RmqConnection():
             decorator with the associated ``handle_response`` decorator.
         queue : str
             The queue name of the RPC server where the command is being sent.
+        timeout : int, optional
+            How long to wait for a response before timing out. Default behavior
+            is no timeout.
         """
         def decorator(func:Callable[[], ResponseObject]):
             @functools.wraps(func)
@@ -683,6 +720,7 @@ class RmqConnection():
             thread = threading.Thread(
                 target=self._send_command,
                 args=(wrapper, command_id, queue),
+                kwargs={'timeout': timeout},
             )
             self.threads.append(thread)
             return wrapper

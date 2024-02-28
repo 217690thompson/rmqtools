@@ -2,6 +2,7 @@ import functools
 import json
 import threading
 import uuid
+from datetime import datetime, timedelta
 from typing import Any, Callable, Union
 
 import pika
@@ -328,7 +329,7 @@ class RpcClient():
         return self.response
 
     def call_threadsafe(self, queue:str, stop_event:threading.Event,
-                        command:ResponseObject) -> ResponseObject:
+                        command:ResponseObject, timeout=None) -> ResponseObject:
         """Similar to the ``call`` method but requests the server in a thread-
         safe manner.
 
@@ -361,8 +362,17 @@ class RpcClient():
         props = self._get_publish_props()
         self.publisher.publish_json(body, routing_key=queue,
                                     properties=props)
+        timeout_time = datetime.max
+        if timeout:
+            timeout_time = datetime.now() + timedelta(seconds=timeout)
         while not stop_event.is_set():
             self.Connection.connection.process_data_events(time_limit=1)
             if self.response is not None:
+                break
+            if datetime.now() > timeout_time:
+                # command timed out
+                self.Connection.channel.queue_purge(queue)
+                self.Connection.connection.close()
+                self.response = None
                 break
         return self.response
