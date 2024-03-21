@@ -363,16 +363,22 @@ class RpcClient():
         self.publisher.publish_json(body, routing_key=queue,
                                     properties=props)
         timeout_time = datetime.max
+        clearqueue = False
         if timeout:
             timeout_time = datetime.now() + timedelta(seconds=timeout)
-        while not stop_event.is_set():
-            self.Connection.connection.process_data_events(time_limit=1)
-            if self.response is not None:
-                break
-            if datetime.now() > timeout_time:
-                # command timed out
-                self.Connection.channel.queue_purge(queue)
-                self.Connection.connection.close()
-                self.response = None
-                break
+        try:
+            while not stop_event.is_set():
+                self.Connection.connection.process_data_events(time_limit=1)
+                if self.response is not None:
+                    break
+                if datetime.now() > timeout_time:
+                    # command timed out
+                    clearqueue = True
+                    break
+        except KeyboardInterrupt as e:
+            clearqueue = True
+        if clearqueue:
+            self.Connection.channel.queue_purge(queue)
+            self.Connection.connection.close()
+            self.response = None
         return self.response
